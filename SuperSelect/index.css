@@ -1,0 +1,121 @@
+.super-select-wraper{
+    padding:10px;
+}
+.super-select-container{
+    border: 1px solid #c7c9cb; 
+    padding:18px; 
+    border-radius:9px;
+}
+
+.super-select-label-container{
+    display:flex;
+    align-items:center; 
+    justify-content: space-between;
+}
+
+
+.super-select-label{
+    font-weight: 500; 
+    font-size: 20px; 
+    line-height: 24px;
+}
+
+
+.search-input{
+    width:100%; box-sizing: border-box;
+    height: 48px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+}
+
+.total-items-list-container{
+    margin-top:22px; 
+    background: #E9ECEF; 
+    padding:21px;
+    padding-top: 3px;
+}
+
+
+.items-btn-container{
+    display:flex; 
+    justify-content: space-between; 
+    align-items:center;
+}
+
+.btns-stack{
+    width: 97%; 
+    height:25px;
+}
+
+.select-all-btn{
+    background: #1D82F5;
+    color: white;
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 25px;
+    width: 10%;
+    
+    }
+    
+    .clear-all-btn{
+    background: transparent;
+    color: #1D82F5;
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 25px;
+    width: 10%;
+    margin-left:20px;
+    border: 1px solid #1D82F5;
+    }
+
+    .items-cancel-btn{
+        font-weight:500; 
+        font-size: 45px; 
+        color:#99A5B5; 
+        transform: rotate(45deg);
+        cursor:pointer;
+    }
+
+    .total-items-list{
+        margin-top:21px; 
+        display:flex; 
+        flex-wrap:wrap; 
+        max-height:119px; 
+        overflow-y: scroll;
+    }
+
+    .total-items-list span{
+        padding: 5px 8px; 
+        background:transparent; 
+        border: 1px solid #6C757D;
+        border-radius: 30px; 
+        margin-bottom:10px; 
+        margin-right:7px;
+        gap: 7px;
+        cursor: pointer;
+    }
+
+    .open-pannel-container{
+        display:flex;
+        width: 100%;
+        justify-content: flex-end; 
+        margin-top:10px;
+    }
+
+    .open-pannel-container .fa-eject{
+        font-weight:500; 
+        font-size: 21px; 
+        color:#99A5B5; 
+        transform: rotate(180deg);
+        cursor:pointer;
+    }
+
+    
+    .btn-disbld{
+        filter: grayscale(100%);
+    }
+    
