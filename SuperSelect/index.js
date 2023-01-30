@@ -4,6 +4,19 @@ import "./index.css"
 
 //import Tooltip from "../Tooltip"
 
+let inputDataArray = [];
+let hintsDataArray = [];
+let tmp_optionHints = [];
+let somethingtmp = [];
+let pretmpArr1 = [];
+let tmpInputArray = [];
+let hintsFromPositionsArr = [];
+let clearAllArray = [];
+let filtered = 0;
+let delidx = -1;
+	
+let delarray = [];
+
 const SuperSelect = (props) => {
 	const {
 		label = "Loading...",
@@ -14,41 +27,22 @@ const SuperSelect = (props) => {
 	} = props
 
 
-	let hintsFromPositionsArray = [];
-	let delarray = [];
-	let tmp_optionHints = ""
-
-	let pretmpArr1 = [];
-
-
-	let filtered = 0;
-	let tmp  = [];
-
-	let renderArray = [];
-	let clearAllArray = [];
-	let tmpInputArray = [];
-	let delidx = -1;
-	let somethingtmp = [];
-	let bbb = [];
-
-
-	
-
+	const [hintsFromPositionsArray, setHintsFromPositionsArray] = useState([])
 
 	const [selectAllDiabled, setSelectAllDiabled] = useState(1);
 	const [clearAllDiabled, setclearAllDiabled] = useState(1);
 
-	const [selectedPos, setselectedPos] = useState([]);
+
 	const [pannelVisibility, setPanelVisibility] = useState(1);
 	const [hints, setHints] = useState();
-	const [removedItems, setRemovedItems] = useState([]);
 
-	const [clearHints, setclearHints] = useState(0);
+
+
 
 
 	useEffect(() => {
+		console.log("use efect rendered")
 		let selectedPos = $(this).val();
-		/////console.log("useEffect")
 		/* Initilizing SELECT2 elements */
 		$(`#search-input`).select2({
 			formatNoMatches: () => noRecordsFound,
@@ -70,102 +64,71 @@ const SuperSelect = (props) => {
 			checkDelorAddResp( $(this).val() );
 			e.stopPropagation();
 		});
+		
 
 
 		/* Catching changes at POSITIONS select  (ClientCandidate -> DepartmentAndPositions->Select)*/
-		$(document).on('change', '#candidates-0-position_ids', function(){
+		$(document).on('change', '#candidates-0-position_ids', function(e){
+			
 			setHintsFromPositions( $(this).val() );
+			e.stopPropagation();
 		});
 
 	},
 		[]);
 
-
 	/* POSITIONS ACTIONS */
 	const setHintsFromPositions = (selectedPosId) =>{
-		hintsFromPositionsArray.length = 0;
+		
+		let inputtedArr = $('#search-input').val();
+		hintsFromPositionsArr = [];
+		inputDataArray = [];
+		hintsDataArray = [];
 		
 		if(selectedPosId != ''){
+
 			positionsList.map(positionItem=>{
-
 				if(positionItem.id == selectedPosId && positionItem.responsibilities){
-					hintsFromPositionsArray = positionItem.responsibilities.split(';;');
-				}
-				
-			})
-
-			
-
-			//let currentInput = [];
-
-			let currentInput = $('#search-input').val() || [];
-
-			let hintsFromPositionsArray_tmp = [];
-
-			hintsFromPositionsArray.map(positems=>{
-				if(!currentInput.includes(positems)){
-					hintsFromPositionsArray_tmp.push(positems)
+					hintsFromPositionsArr = positionItem.responsibilities.split(';;');
 				}
 			})
 
-			//hintsFromPositionsArray = hintsFromPositionsArray_tmp;
-
-			console.log('currentInput', $('#search-input').val() )
-			console.log("hintsFromPositionsArray", hintsFromPositionsArray)
-			console.log('hintsFromPositionsArray_tmp', hintsFromPositionsArray_tmp)
-
-
-			
-			console.log("hintsFromPositionsArray initial", hintsFromPositionsArray)
-			setselectedPos(hintsFromPositionsArray)
-			//hintsFromPositionsArray.length = 0;
-			tmpInputArray.length = 0;
-			bbb.length = 0;
-			renderArray = hintsFromPositionsArray_tmp;
-			//bbb = hintsFromPositionsArray_tmp;
-			if(hintsFromPositionsArray.length  > 0){
+			/*
+			if(hintsFromPositionsArr.length  > 0){
 				setSelectAllDiabled(0);
 			}else{
 				setSelectAllDiabled(1);
 			}
-			
-			//renderall(renderArray);
-			renderHints(renderArray)
+			*/
+
+
+			let hintsFromPositionsArr_tmp = hintsFromPositionsArr.filter(function(value){
+				return inputtedArr ? !inputtedArr.includes(value) : [];
+			});
+			setHintsFromPositionsArray(hintsFromPositionsArr_tmp)
+			renderHints(hintsFromPositionsArr_tmp)
 		}else{
-			setselectedPos([])
-		
-			hintsFromPositionsArray.length = 0;
-			tmpInputArray.length = 0;
-			bbb.length = 0;
-			renderArray = [];
-
-			//renderall(renderArray);
-			renderHints(renderArray)
+			hintsFromPositionsArr = [];
+			inputDataArray = [];
+			hintsDataArray = [];
+			renderHints([])
 		}
-
 	}
 
 
-	/* SELECT SEARCH ACTIONS  */
+	/* SELECT INPUT ACTIONS  */
 	function checkDelorAddResp(dataFromInput){
+		console.log("hintsDataArray from checkDelorAddResp func begin", hintsDataArray)
 		somethingtmp = [];
-		let notinclude = 0;
-		let prevdata = [];
-		let minusbox = dataFromInput
-		///delarray.length = 0;
-		///respSelectedArray.length = 0;
-		
-		
-		console.log('hintsFromPositionsArray', hintsFromPositionsArray)
-
+	
 		if(dataFromInput && dataFromInput.length > 0){
 			dataFromInput.map(inpel=>{
 				if(hintsFromPositionsArray.includes(inpel) && dataFromInput.length > 0){
-					setclearAllDiabled(0);
+					//setclearAllDiabled(0);
 				}
 			})
 		}else{
-			setclearAllDiabled(1);
+			//setclearAllDiabled(1);
 		}
 
 		pretmpArr1.push( dataFromInput != null ? dataFromInput : [] );
@@ -186,8 +149,19 @@ const SuperSelect = (props) => {
 		if(delidx >= 1 ){delidx = -1; }
 		
 		if(pretmpArr1 != [] && pretmpArr1 != null){
+
+			console.log('pretmpArr1', pretmpArr1[pretmpArr1.length-1], pretmpArr1[pretmpArr1.length-2] )
+
 			// CHECKING WE DELETTING OR ADDING ITEMS
-			if( pretmpArr1[0] 
+			if( typeof(pretmpArr1[pretmpArr1.length-2]) == "undefined" || pretmpArr1[pretmpArr1.length-2] == []){
+
+				hintsDataArray = hintsFromPositionsArr.filter(function(value){
+					return dataFromInput ? !dataFromInput.includes(value) : [];
+				});	
+
+				renderHints([...hintsDataArray]);
+				//console.log("FIRST ADD");	
+			}else if( pretmpArr1[0] 
 				&& pretmpArr1[1] 
 				&& pretmpArr1[0] != null
 				&& pretmpArr1[1] != null
@@ -195,201 +169,90 @@ const SuperSelect = (props) => {
 				&& typeof(pretmpArr1[1]) !== "undefined"
 				&& (pretmpArr1[pretmpArr1.length-1].length > pretmpArr1[pretmpArr1.length-2].length ) ){
 
-				tmp.length = 0;
-				console.log("ADD 2")
-				//selectToHintsLoadBalancer();
+				hintsDataArray = hintsFromPositionsArr.filter(function(value){
+					return dataFromInput ? !dataFromInput.includes(value) : [];
+				});	
+
+				renderHints([...hintsDataArray]);
+				//console.log("ADD 2")
 			}else{ 
-				
-				console.log("CLEAR ALL HINTS DEL", clearHints)
 
-				if(respSelectedArray && respSelectedArray.length>1){
-					respSelectedArray.length = 0;
-				}
-		
-			
-			
-				//console.log("hintsFromPositionsArray DEL", hintsFromPositionsArray, selectedPos)
 				if(typeof(somethingtmp[0]) !== "undefined"){
-					
+	
 					somethingtmp[0].map(el=>{
-						if(somethingtmp[1] && !somethingtmp[1].includes(el) && hintsFromPositionsArray && hintsFromPositionsArray.includes(el)){
-							filtered = parseInt(somethingtmp[1]);
-							
-							filtered = parseInt(el);
-							notinclude = 0;
-							//renderArray = renderArray;
-						/*
-							
-							if(!tmp.includes(filtered)){
-								tmp.push(filtered)	
-							}
-							*/
-						
-							//renderArray = delarray;
-							//prevdata = renderArray;
-
-							
+						if(somethingtmp[1] && !somethingtmp[1].includes(el) ){
+							filtered = somethingtmp[1];
+							filtered = el;
 						}else{
-							//filtered = [];
-							console.log("NOT ICLUDE")
-							notinclude = 1;
-							//renderArray = renderArray;
+							//console.log("NOT ICLUDE")
 						}
-
-
-						
-						
-
-						/*
-						if(bbb.includes(filtered)){
-							bbb.push(filtered)
-						}
-						*/
-						
-						
-						//console.log("bbb", bbb)
-						
-						
 					})
 					
-					if(hintsFromPositionsArray && dataFromInput){
-						hintsFromPositionsArray.map(prt=>{
-							if(!dataFromInput.includes(prt) && !bbb.includes(prt) ){
-								bbb.push(prt)
-							}
-						})
+					if(hintsFromPositionsArr.includes(filtered)){
+						if(!hintsDataArray.includes(filtered) ){
+							hintsDataArray.push(filtered);
+						}
 					}
-/*
-					console.log("minusbox", minusbox)
-					console.log("tmp", tmp)
-					console.log("hints", hints)
-*/
+					
+					renderHints([...hintsDataArray]);
 
-			
-					if(clearAllArray && clearAllArray.length < 1 ){
-						setSelectAllDiabled(0);
-						//renderall( [...bbb]);
-						//selectToHintsLoadBalancer();
-						console.log("DEL bbb", bbb)
-						renderHints([...bbb])
-					}
-						setclearHints(0);
-						console.log("clearHints CLICKED in place del 2", clearHints)
-						console.log("hints", renderArray)
+					inputDataArray = hintsFromPositionsArr.filter(function(value){
+						return hintsDataArray ? !hintsDataArray.includes(value) : [];
+					});
 				}
-				
-				console.log("DELETE 2")
+				//console.log("DELETE 2")
 			}
 		}
 		
 	}
 			
 	
-	const sethit = (e) =>{
+	let sethit = (e) =>{
+		
+		hintsDataArray = [];
 
 		let selectedHit = $(e.target).attr("data-id");
-
-		if (!respSelectedArray.includes(selectedHit)) {
-			respSelectedArray.push(selectedHit);
+		let inpArr = $('#search-input').val();
+		
+		if(!inputDataArray.includes(selectedHit)) {
+			inputDataArray.push(selectedHit);
 		}
-
-		delarray = hints.filter(function (item) {
-			return item != selectedHit
+		
+		hintsDataArray = hintsFromPositionsArr.filter(function(value){
+			return inputDataArray ? !inputDataArray.includes(value) : [];
 		});
 
-		console.log('delarray', delarray)
+		renderSelect(  inpArr ? [...inputDataArray, ...inpArr] :  inputDataArray );
+		renderHints([...hintsDataArray]);
 		
-
-		//$('#search-input').val(respSelectedArray).trigger("change");
-
-		
-
-		renderArray = delarray;
-
-		setRemovedItems(hints);
-
-		renderArray.length > 0 ? setSelectAllDiabled(0) : setSelectAllDiabled(1)
-		//renderall(renderArray);
-
-		
-		renderSelect( $('#search-input').val() && $('#search-input').val() != null ? [...respSelectedArray, ...$('#search-input').val()] : respSelectedArray );
-		renderHints(renderArray);
-		
-
-		//selectToHintsLoadBalancer(respSelectedArray);
-
-		///deleteHints(delarray);
-
 		e.stopPropagation();
 	}
 
 
 	const setAllHints = (e) => {
-		//console.log('tmp...',tmp)
-		respSelectedArray.length = 0;
-		tmp.length = 0;
-		renderArray.length = 0;
-		
 		let inparr_tmp = $('#search-input').val();
-		console.log('inparr_tmp', inparr_tmp)
-		let outparr = ( inparr_tmp ? [...inparr_tmp, ...hints] : hints);
-		console.log('outparr', outparr)
-		$('#search-input').val(outparr).trigger("change");
-		renderall(renderArray);
-		setSelectAllDiabled(1);
-
+		hintsDataArray = [];
+		inputDataArray = [];
+		let outparr = ( inparr_tmp ? [...inparr_tmp, ...hintsFromPositionsArr] : hintsFromPositionsArr );
+		renderSelect(outparr);
+		renderHints([]);
 		e.stopPropagation();
 	}
 
 	
 	const clearAllHints = (e) => {
-		
-		console.log('selectedPos', selectedPos)
 		let tmparr = $('#search-input').val();
-
-		if(selectedPos && selectedPos.length > 0 && tmparr){
-		
-			tmparr.map(elms=>{
-				if(selectedPos.includes(elms)){
-					clearAllArray.push(elms)
-				}else{
-					renderArray.push(elms)
-				}
-			})
-
-			renderHints(hintsFromPositionsArray);
-			renderSelect([]);
-			
-			setclearAllDiabled(1);
-		}
-		
+		inputDataArray = [];
+		hintsDataArray = [];
+		renderSelect(inputDataArray);
+		renderHints( hintsFromPositionsArr );
+		inputDataArray = [];
 		e.stopPropagation();
-		
-
-		setclearHints(1);
-		console.log("clearHints CLICKED in place", clearHints)
 	}
 
-	// DEL LATER
-	let renderall = (renderArray) => {
-		setHints(renderArray ? [...renderArray] : [])
-	}
-
-
-
-	let renderSelect = (selectOutput) =>{
-		$('#search-input').val(selectOutput).trigger("change");
-	}
-
-	let renderHints = (renderArray) =>{
-		console.log("renderArray", renderArray)
-		setHints(renderArray ? [...renderArray] : [])
-	}
-			
 	
-	//  GENEERATING HINTS HTML OUTPUT
+	/*  GENEERATING HINTS HTML OUTPUT ----------------------------------------- */
 	let optionHints	= Object.values(responsibilitiesList).map(resp => {
-	
 		if(hints){
 
 			tmp_optionHints = hints.map((item) => {
@@ -407,7 +270,7 @@ const SuperSelect = (props) => {
 
 
 	
-	/* PANEL ACTIONS */
+	/* PANEL ACTIONS ------------------------------------------------------------ */
 	const hidePanel = (e) =>{
 		setPanelVisibility(0);
 		e.stopPropagation();
@@ -416,6 +279,25 @@ const SuperSelect = (props) => {
 	const showpanel = (e) =>{
 		setPanelVisibility(1);
 		e.stopPropagation();
+	}
+
+	const setButtonsStatus = (renderArray) =>{
+		console.log("checking buttons", 'renderArray', renderArray, 'inputDataArray', inputDataArray, 'hintsDataArray', hintsDataArray, "$('#search-input').val()", $('#search-input').val(), 'hints', hints )
+		$('#search-input').val() ? setclearAllDiabled(0) : setclearAllDiabled(1);
+		renderArray && renderArray.length > 0 && hintsDataArray ? setSelectAllDiabled(0) : setSelectAllDiabled(1);
+	}
+
+
+
+	/* RESULTS RENDER ------------------------------------------------------------ */ 
+	let renderSelect = (selectOutput) =>{
+		setButtonsStatus(selectOutput);
+		$('#search-input').val(selectOutput).trigger("change");
+	}
+
+	let renderHints = (renderArray) =>{
+		setButtonsStatus(renderArray);
+		setHints(renderArray);
 	}
 	
 	
@@ -446,8 +328,8 @@ const SuperSelect = (props) => {
 					<div className={`total-items-list-container ${pannelVisibility == 0 ? 'hide' : ''} `}>
 						<div className="items-btn-container">
 							<div className="btns-stack">
-								<div className={`btn select-all-btn ${selectAllDiabled == 1 ? 'btn-disbld disabled' : ''} `} onClick={setAllHints}>Select All</div>
-								<div className={`btn clear-all-btn ${clearAllDiabled == 1 ? 'btn-disbld disabled' : ''} `} onClick={clearAllHints}>Clear All</div>
+								<div className={`btn select-all-btn ${selectAllDiabled == 1 ? 'btn-disbld disabled' : ''} `} onClick={ selectAllDiabled == 0 ? setAllHints : undefined } >Select All</div>
+								<div className={`btn clear-all-btn ${clearAllDiabled == 1 ? 'btn-disbld disabled' : ''} `} onClick={ clearAllDiabled == 0 ? clearAllHints : undefined }>Clear All</div>
 							</div>
 
 							<span className="items-cancel-btn" onClick = {hidePanel}>+</span>
